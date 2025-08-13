@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from asyncio import Task, CancelledError
+from asyncio import CancelledError, Task
 from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from enum import Enum, EnumMeta
-from inspect import iscoroutine
 from typing import (
     Any,
     Generic,
@@ -304,8 +303,7 @@ def _cancelled_awaitables(awaitables):
 
 
 async def enhanced_gather(*coros_or_futures: Awaitable[V], return_exceptions: bool = False):
-    """
-    Perform an asyncio.gather, but with better error handling.
+    """Perform an asyncio.gather, but with better error handling.
 
     By default asyncio.gather() will raise CancelledError on a timeout, which will contain
     absolutely no useful information. This function attempts to remedy this behaviour.
@@ -315,9 +313,11 @@ async def enhanced_gather(*coros_or_futures: Awaitable[V], return_exceptions: bo
 
     Note that unlike asyncio.gather, this does not return an asyncio.Future and so
     does not afford the ability to be cancelled directly.
+
     Args:
         coros_or_futures: The awaitables to await on
         return_exceptions: Behaves as for asyncio.await()
+
     Returns:
          The results of the tasks
     Raises:
