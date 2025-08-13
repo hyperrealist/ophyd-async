@@ -6,6 +6,7 @@ from asyncio import Task, CancelledError
 from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from enum import Enum, EnumMeta
+from inspect import iscoroutine
 from typing import (
     Any,
     Generic,
@@ -302,7 +303,7 @@ def _cancelled_awaitables(awaitables):
     ]
 
 
-async def enhanced_gather(*coros_or_futures, return_exceptions: bool = False):
+async def enhanced_gather(*coros_or_futures: Awaitable[V], return_exceptions: bool = False):
     """
     Perform an asyncio.gather, but with better error handling.
 
@@ -322,14 +323,14 @@ async def enhanced_gather(*coros_or_futures, return_exceptions: bool = False):
     Raises:
          CancelledError on a timeout or if the tasks were otherwise cancelled.
     """
+    # if anything is a bare coro then wrap it in a future so that we can check if it is cancelled
+    wrapped_awaitables = [awaitable if isinstance(awaitable, Status) or asyncio.isfuture(awaitable)
+                          else asyncio.ensure_future(awaitable)
+                        for awaitable in coros_or_futures]
     try:
-        # if anything is a bare coro then wrap it in a task so that we can check if it is cancelled
-        coros_or_futures = [awaitable if isinstance(awaitable, Status) or asyncio.isfuture(awaitable)
-                            else asyncio.create_task(awaitable)
-                            for awaitable in coros_or_futures]
-        results = await asyncio.gather(*coros_or_futures, return_exceptions=return_exceptions)
+        results = await asyncio.gather(*wrapped_awaitables, return_exceptions=return_exceptions)
     except CancelledError as e:
-        awaitables = _cancelled_awaitables(coros_or_futures)
+        awaitables = _cancelled_awaitables(wrapped_awaitables)
         raise CancelledError(f"asyncio.gather() was cancelled with the following"
                              f" cancelled items {[repr(a) for a in awaitables]}") from e
     return results

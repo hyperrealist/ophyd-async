@@ -301,7 +301,7 @@ async def test_format_error_string_input():
 
 
 @pytest.mark.parametrize("set_to_delay, expected_message", [
-    ["x", "test_enhanced_gather.<locals>.async_set()"],
+    ["x", "test_enhanced_gather_populates_cancelled_error_message_on_timeout.<locals>.async_set()"],
     ["y", "AsyncStatus, device: my_device"],
     ["z", "set z"]
                          ])
