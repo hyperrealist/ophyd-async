@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from asyncio import Task, CancelledError
 from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from enum import Enum, EnumMeta
@@ -17,6 +18,7 @@ from typing import (
 from unittest.mock import Mock
 
 import numpy as np
+from bluesky.protocols import Status
 from pydantic import BaseModel, ConfigDict
 
 T = TypeVar("T")
@@ -290,6 +292,47 @@ async def merge_gathered_dicts(
     for result in await asyncio.gather(*coros):
         ret.update(result)
     return ret
+
+
+def _cancelled_awaitables(awaitables):
+    return [
+        a for a in awaitables
+        if ((isinstance(a, Status) and a.exception()) or
+            (isinstance(a, Task) and a.cancelled()))
+    ]
+
+
+async def enhanced_gather(*coros_or_futures, return_exceptions: bool = False):
+    """
+    Perform an asyncio.gather, but with better error handling.
+
+    By default asyncio.gather() will raise CancelledError on a timeout, which will contain
+    absolutely no useful information. This function attempts to remedy this behaviour.
+    This function has the same behaviour as asyncio.gather() with the only difference
+    being that CancelledError will contain additional information in the message about
+    what was cancelled, if the awaitables are Status or Task objects.
+
+    Note that unlike asyncio.gather, this does not return an asyncio.Future and so
+    does not afford the ability to be cancelled directly.
+    Args:
+        coros_or_futures: The awaitables to await on
+        return_exceptions: Behaves as for asyncio.await()
+    Returns:
+         The results of the tasks
+    Raises:
+         CancelledError on a timeout or if the tasks were otherwise cancelled.
+    """
+    try:
+        # if anything is a bare coro then wrap it in a task so that we can check if it is cancelled
+        coros_or_futures = [awaitable if isinstance(awaitable, Status) or asyncio.isfuture(awaitable)
+                            else asyncio.create_task(awaitable)
+                            for awaitable in coros_or_futures]
+        results = await asyncio.gather(*coros_or_futures, return_exceptions=return_exceptions)
+    except CancelledError as e:
+        awaitables = _cancelled_awaitables(coros_or_futures)
+        raise CancelledError(f"asyncio.gather() was cancelled with the following"
+                             f" cancelled items {[repr(a) for a in awaitables]}") from e
+    return results
 
 
 async def gather_dict(coros: Mapping[T, Awaitable[V]]) -> dict[T, V]:
