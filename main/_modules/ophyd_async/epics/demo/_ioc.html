@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ophyd_async.epics.demo._ioc &#8212; ophyd-async 0.13.3.dev31+g9b7949e2d documentation</title>
+    <title>ophyd_async.epics.demo._ioc &#8212; ophyd-async 0.13.3.dev19+g80af66aec documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../_static/documentation_options.js?v=5be7f3e8"></script>
+    <script src="../../../../_static/documentation_options.js?v=e4430cb0"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -134,8 +134,8 @@ window.addEventListener("load", () => mermaid.run());
       
     
     
-    <img src="../../../../_static/ophyd-async-logo.svg" class="logo__image only-light" alt="ophyd-async 0.13.3.dev31+g9b7949e2d documentation - Home"/>
-    <img src="../../../../_static/ophyd-async-logo.svg" class="logo__image only-dark pst-js-only" alt="ophyd-async 0.13.3.dev31+g9b7949e2d documentation - Home"/>
+    <img src="../../../../_static/ophyd-async-logo.svg" class="logo__image only-light" alt="ophyd-async 0.13.3.dev19+g80af66aec documentation - Home"/>
+    <img src="../../../../_static/ophyd-async-logo.svg" class="logo__image only-dark pst-js-only" alt="ophyd-async 0.13.3.dev19+g80af66aec documentation - Home"/>
   
   
 </a></div>
@@ -464,7 +464,6 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for ophyd_async.epics.demo._ioc</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">atexit</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">ophyd_async.epics.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestingIOC</span>
@@ -483,14 +482,10 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">ioc</span> <span class="o">=</span> <span class="n">TestingIOC</span><span class="p">()</span>
     <span class="c1"># Create X and Y motors</span>
     <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">]:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;:::: Loading DB file:&quot;</span><span class="p">,</span> <span class="n">HERE</span> <span class="o">/</span> <span class="s2">&quot;motor.db&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
         <span class="n">ioc</span><span class="o">.</span><span class="n">add_database</span><span class="p">(</span><span class="n">HERE</span> <span class="o">/</span> <span class="s2">&quot;motor.db&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">STAGE:</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
     <span class="c1"># Create a multichannel counter with num_counters</span>
     <span class="n">ioc</span><span class="o">.</span><span class="n">add_database</span><span class="p">(</span><span class="n">HERE</span> <span class="o">/</span> <span class="s2">&quot;point_detector.db&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">DET:&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_channels</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;:::: Loading DB file:&quot;</span><span class="p">,</span> <span class="n">HERE</span> <span class="o">/</span> <span class="s2">&quot;point_detector_channel.db&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
-        <span class="p">)</span>
         <span class="n">ioc</span><span class="o">.</span><span class="n">add_database</span><span class="p">(</span>
             <span class="n">HERE</span> <span class="o">/</span> <span class="s2">&quot;point_detector_channel.db&quot;</span><span class="p">,</span>
             <span class="n">P</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">DET:&quot;</span><span class="p">,</span>
