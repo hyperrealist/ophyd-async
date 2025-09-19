@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Implementing Devices &#8212; ophyd-async 0.13.3.dev20+g77d9ebca0 documentation</title>
+    <title>Implementing Devices &#8212; ophyd-async 0.13.3.dev20+gdd39e0eed documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=cac69723"></script>
+    <script src="../_static/documentation_options.js?v=a9468687"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -137,8 +137,8 @@ window.addEventListener("load", () => mermaid.run());
       
     
     
-    <img src="../_static/ophyd-async-logo.svg" class="logo__image only-light" alt="ophyd-async 0.13.3.dev20+g77d9ebca0 documentation - Home"/>
-    <img src="../_static/ophyd-async-logo.svg" class="logo__image only-dark pst-js-only" alt="ophyd-async 0.13.3.dev20+g77d9ebca0 documentation - Home"/>
+    <img src="../_static/ophyd-async-logo.svg" class="logo__image only-light" alt="ophyd-async 0.13.3.dev20+gdd39e0eed documentation - Home"/>
+    <img src="../_static/ophyd-async-logo.svg" class="logo__image only-dark pst-js-only" alt="ophyd-async 0.13.3.dev20+gdd39e0eed documentation - Home"/>
   
   
 </a></div>
@@ -573,6 +573,8 @@ FastCS</label><div class="sd-tab-content docutils">
 EPICS</label><div class="sd-tab-content docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Used for tutorial `Implementing Devices`.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
 <span class="c1"># Import bluesky and ophyd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">bluesky.plan_stubs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">bps</span>  <span class="c1"># noqa: F401</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">bluesky.plans</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">bp</span>  <span class="c1"># noqa: F401</span>
@@ -586,13 +588,15 @@ EPICS</label><div class="sd-tab-content docutils">
 <span class="n">RE</span> <span class="o">=</span> <span class="n">RunEngine</span><span class="p">(</span><span class="n">call_returns_result</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">autoawait_in_bluesky_event_loop</span><span class="p">()</span>
 
-<span class="c1"># Add a callback for plotting</span>
-<span class="n">bec</span> <span class="o">=</span> <span class="n">BestEffortCallback</span><span class="p">()</span>
-<span class="hll"><span class="n">RE</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">bec</span><span class="p">)</span>
+<span class="hll"><span class="c1"># Add a callback for plotting</span>
+</span><span class="hll"><span class="n">bec</span> <span class="o">=</span> <span class="n">BestEffortCallback</span><span class="p">()</span>
+</span><span class="hll"><span class="n">RE</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">bec</span><span class="p">)</span>
 </span><span class="hll">
 </span><span class="hll"><span class="c1"># Start IOC with demo pvs in subprocess</span>
 </span><span class="hll"><span class="n">prefix</span> <span class="o">=</span> <span class="n">testing</span><span class="o">.</span><span class="n">generate_random_pv_prefix</span><span class="p">()</span>
+</span><span class="hll"><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;:::: calling start_ioc_subprocess&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
 </span><span class="hll"><span class="n">ioc</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">start_ioc_subprocess</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">num_channels</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span class="hll"><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;:::: called start_ioc_subprocess&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
 </span><span class="hll">
 </span><span class="hll"><span class="c1"># All Devices created within this block will be</span>
 </span><span class="hll"><span class="c1"># connected and named at the end of the with block</span>
