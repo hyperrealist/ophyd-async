@@ -94,7 +94,7 @@ def get_test_descriptor(python_type: type[T], value: T, is_cmd: bool) -> dict:
         return {"dtype": "string", "shape": []}
     if get_origin(python_type) is Sequence:
         return {"dtype": "array", "shape": [len(value)]}
-    if issubclass(python_type, StrictEnum):
+    if isinstance(python_type, type) and issubclass(python_type, StrictEnum):
         return {"dtype": "string", "shape": []}
     return {
         "dtype": "array",
