@@ -17,6 +17,9 @@ def event_loop():
         task.cancel()
     loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
 
+    # Let cancelled tasks run one loop iteration
+    loop.run_until_complete(asyncio.sleep(0))
+
     # Close the loop
     loop.close()
     asyncio.set_event_loop(None)
